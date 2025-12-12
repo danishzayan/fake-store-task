@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     // Added a wrapper div to handle the font-family and relative positioning for the background
-    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white">
+    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white bg-[#020617]">
       
       {/* Background SVG */}
       <svg
@@ -56,9 +57,9 @@ const Home = () => {
 
         {/* Contact Button */}
         {/* Changed bg-white to bg-[#fbcc20] */}
-        <button className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-slate-200 active:scale-95 transition-all rounded-full">
+        <Link to="/login" className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-slate-200 active:scale-95 transition-all rounded-full">
           Login
-        </button>
+        </Link>
 
         {/* Mobile Menu Toggle */}
         <button
@@ -147,9 +148,11 @@ const Home = () => {
           </p>
           <div className="flex items-center gap-4 mt-8 text-sm">
             {/* Changed bg-white to bg-[#fbcc20] */}
+            <Link to="/login">
             <button className="bg-[#fbcc20] hover:bg-slate-200 font-medium text-black active:scale-95 rounded-md px-7 h-11">
               Shop Now
             </button>
+            </Link>
             <button className="flex items-center gap-2 border border-[#fbcc20] active:scale-95 hover:bg-white/10 transition text-[#fbcc20] rounded-md px-6 h-11">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
