@@ -52,18 +52,18 @@ const ProductCard = () => {
                 {/* actions */}
                 <div className="flex items-center justify-between mt-7 gap-[15px]">
                     <button
-                        className="py-[9px] px-4 text-white rounded-2xl grow justify-center flex items-center gap-[0.5rem] hover:bg-[#01849b] text-[1rem] bg-[#0FABCA] transition-all duration-200">
+                        className="py-[9px] px-4 text-white rounded-2xl grow justify-center flex items-center gap-[0.5rem] hover:bg-[#01849b] text-[1rem] bg-[#fbcc20] transition-all duration-200">
                         View Deal
                         <FiArrowUpRight className="text-[1.3rem]"/>
                     </button>
-                    <button className="p-[9px] rounded-full border-2 border-[#0FABCA]">
+                    <button className="p-[9px] rounded-full border-2 border-[#fbcc20]">
                         {
                             isFavorite ? (
                                 <RiHeartFill onClick={() => setIsFavorite(false)}
-                                             className="text-[#0FABCA] text-[1.3rem]"/>
+                                             className="text-[#fbcc20] text-[1.3rem]"/>
                             ) : (
                                 <RiHeartAddLine onClick={() => setIsFavorite(true)}
-                                                className="text-[#0FABCA] text-[1.3rem]"/>
+                                                className="text-[#fbcc20] text-[1.3rem]"/>
                             )
                         }
                     </button>

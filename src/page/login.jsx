@@ -1,4 +1,4 @@
-export default function Example() {
+const Login = () => {
     return (
         <div className="flex h-[700px] w-full">
             <div className="w-full hidden md:inline-block">
@@ -52,3 +52,5 @@ export default function Example() {
         </div>
     );
 };
+
+export default Login;
