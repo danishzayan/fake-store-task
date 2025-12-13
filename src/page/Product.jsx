@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchProducts } from "../features/products/productsSlice";
 import { logout } from "../features/auth/authSlice";
-import ProductCard from "../components/productCard";
+import ProductCard from "../components/ProductCard";
 import Loader from "../components/Loader";
 import Pagination from "../components/Pagination";
 import { FiInbox } from "react-icons/fi";
