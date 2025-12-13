@@ -5,16 +5,19 @@ import Product from "./page/Product";
 import ViewProduct from "./page/ViewProduct";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/products" element={<Product />} />
-        <Route path="/products/:id" element={<ViewProduct />} />
+        <Route path="/" element={<Home />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/products" element={<Product />} />
+          <Route path="/products/:id" element={<ViewProduct />} />
+        </Route>
       </Routes>
     </>
   );

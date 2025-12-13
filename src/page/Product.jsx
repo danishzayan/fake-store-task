@@ -44,8 +44,8 @@ const Product = () => {
   }, []);
 
   const handleLogout = () => {
-    dispatch(logout());
     navigate("/");
+    dispatch(logout());
   };
 
   const categories = [

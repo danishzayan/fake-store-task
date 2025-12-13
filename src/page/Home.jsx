@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../features/auth/authSlice';
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const profileRef = useRef(null);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setIsProfileMenuOpen(false);
+    navigate('/');
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     // Added a wrapper div to handle the font-family and relative positioning for the background
-    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white">
+    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white bg-[#0f172a]">
       
       {/* Background SVG */}
       <svg
@@ -29,31 +54,80 @@ const Home = () => {
       </svg>
 
       {/* Navigation */}
-      <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur text-sm">
-        <a href="https://prebuiltui.com">
+      <nav className="sticky top-0 z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur-md bg-[#0f172a]/30 text-sm border-b border-white/5">
+        <Link to="/">
            {/* Added border-[#fbcc20] border-[2px] and rounded-full */}
            <img
             src="https://psiborg.in/wp-content/uploads/2024/03/psiborg-logo-white-circle.webp"
             alt="logo"
             className="h-14 w-14 border-4 border-[#fbcc20] rounded-full"
           />
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8 transition duration-500">
-          <a href="/" className="hover:text-slate-300 transition">
+          <Link to="/" className="hover:text-slate-300 transition">
             Home
-          </a>
-          <a href="/products" className="hover:text-slate-300 transition">
+          </Link>
+          <Link to="/products" className="hover:text-slate-300 transition">
             Products
-          </a>
+          </Link>
         </div>
 
-        {/* Contact Button */}
-        {/* Changed bg-white to bg-[#fbcc20] */}
-        <Link to="/login" className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-[#fbcc20]/80 active:scale-95 transition-all rounded-full cursor-pointer">
-          Login
-        </Link>
+        {/* Contact Button / User Profile */}
+        {isLoggedIn ? (
+          <div className="hidden md:flex items-center gap-6">
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-2 focus:outline-none cursor-pointer"
+              >
+                <img
+                  className="h-10 w-10 rounded-full border-2 border-slate-600 hover:border-[#fbcc20] transition object-cover bg-slate-700"
+                  src={`https://api.dicebear.com/9.x/initials/svg?seed=${
+                    user?.email || "User"
+                  }`}
+                  alt="User Profile"
+                />
+              </button>
+              {isProfileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-800 border border-slate-700 ring-1 ring-black ring-opacity-5 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 text-xs text-slate-400 border-b border-slate-700 mb-1">
+                    Signed in as <br />
+                    <span className="text-white font-medium truncate block">
+                      {user?.email || "User"}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" x2="9" y1="12" y2="12" />
+                    </svg>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <Link to="/login" className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-[#fbcc20]/80 active:scale-95 transition-all rounded-full cursor-pointer">
+            Login
+          </Link>
+        )}
 
         {/* Mobile Menu Toggle */}
         <button
@@ -81,17 +155,15 @@ const Home = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 z-[100] bg-black/40 text-white backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-300 ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-0 z-[100] bg-black/90 text-white backdrop-blur-xl flex flex-col items-center justify-center gap-6 md:hidden transition-all duration-300 ${
+          isMenuOpen
+            ? "opacity-100 visible"
+            : "opacity-0 invisible pointer-events-none"
         }`}
       >
-        <a href="/">Home</a>
-        <a href="/products">Products</a>
-        <a href="/stories">Stories</a>
-        <a href="/pricing">Pricing</a>
         <button
           onClick={() => setIsMenuOpen(false)}
-          className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-white hover:bg-slate-200 transition text-black rounded-md flex"
+          className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,12 +175,51 @@ const Home = () => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="lucide lucide-x-icon lucide-x"
           >
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
           </svg>
         </button>
+
+        <Link
+          to="/"
+          onClick={() => setIsMenuOpen(false)}
+          className="text-xl font-medium hover:text-[#fbcc20]"
+        >
+          Home
+        </Link>
+        <Link
+          to="/products"
+          onClick={() => setIsMenuOpen(false)}
+          className="text-xl font-medium hover:text-[#fbcc20]"
+        >
+          Products
+        </Link>
+
+        <div className="w-1/2 border-t border-white/10 my-2"></div>
+
+        {isLoggedIn ? (
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-slate-400 text-sm">{user?.email}</span>
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false);
+              }}
+              className="text-red-400 font-medium flex items-center gap-2"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+            className="px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-[#fbcc20]/80 active:scale-95 transition-all rounded-full cursor-pointer"
+          >
+            Login
+          </Link>
+        )}
       </div>
 
       {/* Hero Section */}

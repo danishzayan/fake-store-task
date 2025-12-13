@@ -1,8 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { login } from '../features/auth/authSlice';
+import toast from 'react-hot-toast';
+import { FaArrowLeft } from 'react-icons/fa';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoggedIn, error } = useSelector((state) => state.auth);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error('Please enter both email and password.');
+      return;
+    }
+    dispatch(login({ email, password }));
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      toast.success('Logged in successfully!');
+      navigate('/products');
+    }
+    if (error) {
+      toast.error(error);
+    }
+  }, [isLoggedIn, error, navigate]);
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#020617] font-['Poppins'] p-4">
+    <div className="relative min-h-screen w-full flex items-center justify-center bg-[#020617] font-['Poppins'] p-4">
+      <div className="absolute top-0 left-0 w-full container mx-auto px-6 py-8">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-[#fbcc20] transition-colors group"
+        >
+          <div className="p-2 rounded-full bg-slate-800 border border-slate-700 group-hover:bg-[#fbcc20] group-hover:text-black transition-all">
+            <FaArrowLeft size={14} />
+          </div>
+          <span className="font-medium text-sm">Back to Home</span>
+        </Link>
+      </div>
       {/* Card Container */}
       {/* Changes: bg-white -> bg-white/5 (transparent), shadow-xl -> shadow-sm, border color adjusted, added backdrop-blur */}
       <div className="bg-white/5 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-sm w-full max-w-md border border-white/10">
@@ -16,7 +57,7 @@ const Login = () => {
           </p>
         </div>
 
-        <form className="w-full flex flex-col gap-5">
+        <form className="w-full flex flex-col gap-5" onSubmit={handleSubmit}>
           {/* Email Input */}
           <div className="group relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -40,6 +81,8 @@ const Login = () => {
             <input
               type="email"
               placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-11 pr-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl outline-none focus:border-[#fbcc30] focus:ring-1 focus:ring-[#fbcc30] transition-all text-sm text-white placeholder-gray-500"
               required
             />
@@ -65,6 +108,8 @@ const Login = () => {
             <input
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-11 pr-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl outline-none focus:border-[#fbcc30] focus:ring-1 focus:ring-[#fbcc30] transition-all text-sm text-white placeholder-gray-500"
               required
             />
@@ -87,7 +132,7 @@ const Login = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="mt-4 w-full py-3.5 rounded-xl bg-[#fbcc30] text-black font-medium text-sm hover:bg-[#eebb20] active:scale-[0.98] transition-all shadow-sm"
+            className="mt-4 w-full py-3.5 rounded-xl bg-[#fbcc30] text-black font-medium text-sm hover:bg-[#eebb20] active:scale-[0.98] transition-all shadow-sm cursor-pointer"
           >
             Log In
           </button>
