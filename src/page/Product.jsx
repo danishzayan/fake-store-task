@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../features/products/productsSlice';
@@ -9,19 +9,36 @@ import Loader from '../components/Loader';
 const Product = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  // Redux State
   const { items: products, status } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.auth);
 
+  // Local State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Click outside handler for profile dropdown
+  const profileRef = useRef(null);
 
   useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchProducts());
     }
   }, [status, dispatch]);
+
+  useEffect(() => {
+    // Close profile menu when clicking outside
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -39,182 +56,236 @@ const Product = () => {
     );
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen font-['Poppins']">
-      <nav className="bg-white dark:bg-gray-800 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
-                <img
-                  src="https://psiborg.in/wp-content/uploads/2024/03/psiborg-logo-white-circle.webp"
-                  alt="logo"
-                  className="h-10 w-10 border-2 border-[#fbcc20] rounded-full"
-                />
-              </Link>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <Link
-                    to="/"
-                    className="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Home
-                  </Link>
-                  <div className="relative">
-                    <select
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium appearance-none"
-                    >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category.charAt(0).toUpperCase() + category.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
-              <div className="max-w-lg w-full lg:max-w-xs">
-                <label htmlFor="search" className="sr-only">
-                  Search
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="Search"
-                    type="search"
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6">
-                <div className="ml-3 relative">
-                  <div>
-                    <button
-                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                      className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                    >
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
-                    </button>
-                  </div>
-                  {isProfileMenuOpen && (
-                    <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
-                      <div className="px-4 py-2 text-sm text-gray-700">
-                        {user?.email}
-                      </div>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="-mr-2 flex md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-              >
-                <span className="sr-only">Open main menu</span>
-                {isMenuOpen ? (
-                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                )}
-              </button>
+    // Wrapper div with Home.jsx styling
+    <div className="relative min-h-screen font-['Poppins'] text-white bg-[#0f172a]">
+      
+      {/* Background SVG (Fixed to cover scrolling content) */}
+      <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden pointer-events-none">
+        <svg
+          className="w-full h-full object-cover"
+          preserveAspectRatio="none"
+          viewBox="0 0 1440 720"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke="#1D293D" strokeOpacity=".7" d="M-15.227 702.342H1439.7" />
+          <circle cx="711.819" cy="372.562" r="308.334" stroke="#1D293D" strokeOpacity=".7" />
+          <circle cx="16.942" cy="20.834" r="308.334" stroke="#1D293D" strokeOpacity=".7" />
+          <path
+            stroke="#1D293D"
+            strokeOpacity=".7"
+            d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7"
+          />
+          <circle cx="782.595" cy="411.166" r="308.334" stroke="#1D293D" strokeOpacity=".7" />
+        </svg>
+      </div>
+
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur-md bg-[#0f172a]/30 text-sm border-b border-white/5">
+        
+        {/* Left Side: Logo & Links */}
+        <div className="flex items-center gap-8">
+          <Link to="/">
+            <img
+              src="https://psiborg.in/wp-content/uploads/2024/03/psiborg-logo-white-circle.webp"
+              alt="logo"
+              className="h-14 w-14 border-4 border-[#fbcc20] rounded-full"
+            />
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link to="/" className="hover:text-[#fbcc20] transition font-medium">
+              Home
+            </Link>
+            
+            {/* Category Dropdown */}
+            <div className="relative group">
+               <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="bg-transparent text-slate-200 border border-slate-600 rounded-md px-2 py-1.5 focus:outline-none focus:border-[#fbcc20] cursor-pointer text-xs uppercase tracking-wide"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat} className="bg-slate-800 text-white">
+                      {cat.toUpperCase()}
+                    </option>
+                  ))}
+               </select>
             </div>
           </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                Home
-              </Link>
-              <select
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="text-gray-300 bg-gray-800 hover:bg-gray-700 block w-full px-3 py-2 rounded-md text-base font-medium"
+        {/* Right Side: Search & Profile */}
+        <div className="hidden md:flex items-center gap-6">
+           {/* Search Bar */}
+           <div className="relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-white/10 border border-slate-600 rounded-full py-2 px-4 pl-10 text-sm focus:outline-none focus:border-[#fbcc20] focus:ring-1 focus:ring-[#fbcc20] w-64 transition-all"
+              />
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
               >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="pt-4 pb-3 border-t border-gray-700">
-              <div className="flex items-center px-5">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                </div>
-                <div className="ml-3">
-                  <div className="text-base font-medium leading-none text-white">
-                    {user?.email}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+           </div>
+
+           {/* User Profile */}
+           <div className="relative" ref={profileRef}>
+              <button 
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-2 focus:outline-none"
+              >
+                <img
+                  className="h-10 w-10 rounded-full border-2 border-slate-600 hover:border-[#fbcc20] transition object-cover"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt="User Profile"
+                />
+              </button>
+
+              {/* Profile Dropdown */}
+              {isProfileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-800 border border-slate-700 ring-1 ring-black ring-opacity-5 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 text-xs text-slate-400 border-b border-slate-700 mb-1">
+                    Signed in as <br/>
+                    <span className="text-white font-medium truncate block">{user?.email || 'User'}</span>
                   </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                    Logout
+                  </button>
                 </div>
-              </div>
-              <div className="mt-3 px-2 space-y-1">
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+              )}
+           </div>
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMenuOpen(true)}
+          className="md:hidden active:scale-90 transition text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 5h16" />
+            <path d="M4 12h16" />
+            <path d="M4 19h16" />
+          </svg>
+        </button>
       </nav>
 
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {status === 'loading' && <Loader />}
-          {status === 'failed' && <p>Error loading products.</p>}
-          {status === 'succeeded' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-[100] bg-black/90 text-white backdrop-blur-xl flex flex-col items-center justify-center gap-6 md:hidden transition-all duration-300 ${
+          isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+      >
+        <button
+          onClick={() => setIsMenuOpen(false)}
+          className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+
+        <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-xl font-medium hover:text-[#fbcc20]">Home</Link>
+        
+        {/* Mobile Search */}
+        <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-white/10 border border-slate-600 rounded-lg py-3 px-4 w-3/4 text-center focus:outline-none focus:border-[#fbcc20]"
+        />
+
+        {/* Mobile Category */}
+        <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-white/10 text-white border border-slate-600 rounded-lg px-4 py-3 w-3/4 focus:outline-none focus:border-[#fbcc20]"
+        >
+            {categories.map((cat) => (
+            <option key={cat} value={cat} className="bg-slate-900">
+                {cat.toUpperCase()}
+            </option>
+            ))}
+        </select>
+
+        <div className="w-1/2 border-t border-white/10 my-2"></div>
+
+        <div className="flex flex-col items-center gap-2">
+            <span className="text-slate-400 text-sm">{user?.email}</span>
+            <button 
+                onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                }}
+                className="text-red-400 font-medium flex items-center gap-2"
+            >
+                Logout
+            </button>
         </div>
+      </div>
+
+      {/* Main Content Area */}
+      <main className="px-6 md:px-16 lg:px-24 xl:px-32 py-10 relative z-10">
+        
+        <div className="flex flex-col mb-10">
+            <h1 className="text-3xl md:text-4xl font-semibold mb-2">
+                Our <span className="text-[#fbcc20]">Products</span>
+            </h1>
+            <p className="text-slate-400 max-w-2xl">
+                Browse our collection of premium items designed to enhance your lifestyle.
+            </p>
+        </div>
+
+        {status === 'loading' && (
+            <div className="flex justify-center items-center h-64">
+                <Loader />
+            </div>
+        )}
+        
+        {status === 'failed' && (
+            <div className="text-center py-20 bg-red-500/10 border border-red-500/20 rounded-xl">
+                <p className="text-red-400">Error loading products. Please try again later.</p>
+            </div>
+        )}
+        
+        {status === 'succeeded' && (
+          <>
+            {filteredProducts.length === 0 ? (
+                <div className="text-center py-20 text-slate-500">
+                    <p>No products found matching your criteria.</p>
+                </div>
+            ) : (
+                /* Grid Layout: 1 col mobile, 2 col sm, 3 col md, 4 col lg */
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+            )}
+          </>
+        )}
       </main>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, {useState} from "react";
 
 // react icons
@@ -7,30 +6,30 @@ import {IoGift} from "react-icons/io5";
 import {FiArrowUpRight} from "react-icons/fi";
 import {RiHeartAddLine, RiHeartFill} from "react-icons/ri";
 
-const ProductCard = () => {
-
+const ProductCard = ({ product }) => {
+    const { image, title, price, description } = product;
     const [isFavorite, setIsFavorite] = useState(false);
 
     return (
-        <div className="border border-gray-300 dark:border-slate-700 w-full md:w-[60%] relative rounded-2xl overflow-hidden">
+        <div className="border border-gray-300 dark:border-slate-700 w-full relative rounded-2xl overflow-hidden">
 
             {/* badge */}
             <span
                 className="bg-red-500 rounded-b-md px-3 py-1 text-[0.9rem] text-white absolute top-0 left-4">Best Value</span>
 
             {/* product image */}
-            <img alt="product/image" src="https://i.ibb.co.com/z4BV3S2/image-1.png"
-                 className="w-full mt-6"/>
+            <img alt="product/image" src={image}
+                 className="w-full h-48 object-contain mt-6"/>
 
             {/* product details */}
             <div className="p-4 pt-0">
-                <h3 className="text-[1.4rem] dark:text-[#abc2d3] font-semibold mb-1 mt-2">Apple</h3>
+                <h3 className="text-[1.4rem] dark:text-[#abc2d3] font-semibold mb-1 mt-2 truncate">{title}</h3>
 
-                <span className="text-[0.9rem] dark:text-slate-400 font-normal text-gray-500 line-clamp-2">2020 Apple MacBook Pro with Apple M1 Chip (13-inch, 8GB RAM, 256GB SSD Storage) - Silver</span>
+                <span className="text-[0.9rem] dark:text-slate-400 font-normal text-gray-500 line-clamp-2">{description}</span>
 
                 {/* price & discount offer */}
                 <div className="flex items-center mt-3 gap-[15px]">
-                    <p className="text-[1.150rem] dark:text-[#abc2d3] font-semibold mt-1">$1024.99+</p>
+                    <p className="text-[1.150rem] dark:text-[#abc2d3] font-semibold mt-1">${price}</p>
 
                     <p className="border text-green-600 text-[0.8rem] border-green-400 px-2 py-1 rounded-md">35%
                         Off</p>
@@ -74,4 +73,3 @@ const ProductCard = () => {
 };
 
 export default ProductCard;
-          
