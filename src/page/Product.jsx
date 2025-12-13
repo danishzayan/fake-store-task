@@ -45,7 +45,7 @@ const Product = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   const categories = [
@@ -191,11 +191,13 @@ const Product = () => {
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-              className="flex items-center gap-2 focus:outline-none"
+              className="flex items-center gap-2 focus:outline-none cursor-pointer"
             >
               <img
-                className="h-10 w-10 rounded-full border-2 border-slate-600 hover:border-[#fbcc20] transition object-cover"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                className="h-10 w-10 rounded-full border-2 border-slate-600 hover:border-[#fbcc20] transition object-cover bg-slate-700"
+                src={`https://api.dicebear.com/9.x/initials/svg?seed=${
+                  user?.email || "User"
+                }`}
                 alt="User Profile"
               />
             </button>
@@ -211,7 +213,7 @@ const Product = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2 text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition"
+                  className="flex w-full items-center gap-2 text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

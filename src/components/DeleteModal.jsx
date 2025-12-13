@@ -41,14 +41,14 @@ const Modal = ({ isOpen, onClose, onConfirm, title, children }) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full md:w-36 h-10 rounded-md border border-slate-600 bg-transparent text-slate-300 font-medium text-sm hover:bg-slate-700 active:scale-95 transition"
+            className="w-full md:w-36 h-10 rounded-md border border-slate-600 bg-transparent text-slate-300 font-medium text-sm hover:bg-slate-700 active:scale-95 transition cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="w-full md:w-36 h-10 rounded-md text-white bg-red-600 font-medium text-sm hover:bg-red-700 active:scale-95 transition"
+            className="w-full md:w-36 h-10 rounded-md text-white bg-red-600 font-medium text-sm hover:bg-red-700 active:scale-95 transition cursor-pointer"
           >
             Confirm
           </button>

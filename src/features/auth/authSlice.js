@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// Attempt to load user data from localStorage
+const storedUser = localStorage.getItem('user');
+
 const initialState = {
-  isLoggedIn: false,
-  user: null,
+  isLoggedIn: !!storedUser,
+  user: storedUser ? JSON.parse(storedUser) : null,
   error: null,
 };
 
@@ -17,18 +20,22 @@ const authSlice = createSlice({
         (email === 'danishzayan6@gmail.com' && password === 'test@123')
       ) {
         state.isLoggedIn = true;
-        state.user = { email };
+        const userPayload = { email };
+        state.user = userPayload;
         state.error = null;
+        localStorage.setItem('user', JSON.stringify(userPayload));
       } else {
         state.isLoggedIn = false;
         state.user = null;
         state.error = 'Invalid credentials';
+        localStorage.removeItem('user');
       }
     },
     logout: (state) => {
       state.isLoggedIn = false;
       state.user = null;
       state.error = null;
+      localStorage.removeItem('user');
     },
   },
 });

@@ -78,16 +78,16 @@ const EditProductModal = ({ isOpen, onClose, onSave, product }) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2 rounded-md border border-slate-600 bg-transparent text-slate-300 font-medium text-sm hover:bg-slate-700"
+            className="px-6 py-2 rounded-md border border-slate-600 bg-transparent text-slate-300 font-medium text-sm hover:bg-slate-700 cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-6 py-2 rounded-md text-black bg-[#fbcc20] font-medium text-sm hover:bg-[#fbcc20]/90"
+            className="px-6 py-2 rounded-md text-black bg-[#fbcc20] font-medium text-sm hover:bg-[#fbcc20]/80 cursor-pointer"
           >
-            Save Changes
+            Update Product
           </button>
         </div>
       </div>
