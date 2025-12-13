@@ -62,11 +62,17 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const index = state.items.findIndex((product) => product.id === action.payload.id);
+        // The API returns the updated product, but it's good practice to merge
+        // it with the existing data in case the response is partial.
+        const updatedProduct = { ...state.selectedProduct, ...action.payload };
+
+        const index = state.items.findIndex(
+          (product) => product.id === updatedProduct.id
+        );
         if (index !== -1) {
-          state.items[index] = action.payload;
+          state.items[index] = updatedProduct;
         }
-        state.selectedProduct = action.payload;
+        state.selectedProduct = updatedProduct;
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.status = 'succeeded';

@@ -47,17 +47,11 @@ const Home = () => {
           <a href="/products" className="hover:text-slate-300 transition">
             Products
           </a>
-          <a href="/stories" className="hover:text-slate-300 transition">
-            Stories
-          </a>
-          <a href="/pricing" className="hover:text-slate-300 transition">
-            Pricing
-          </a>
         </div>
 
         {/* Contact Button */}
         {/* Changed bg-white to bg-[#fbcc20] */}
-        <Link to="/login" className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-slate-200 active:scale-95 transition-all rounded-full">
+        <Link to="/login" className="hidden md:block px-6 py-2.5 text-black font-medium bg-[#fbcc20] hover:bg-[#fbcc20]/80 active:scale-95 transition-all rounded-full cursor-pointer">
           Login
         </Link>
 
@@ -148,8 +142,8 @@ const Home = () => {
           </p>
           <div className="flex items-center gap-4 mt-8 text-sm">
             {/* Changed bg-white to bg-[#fbcc20] */}
-            <Link to="/login">
-            <button className="bg-[#fbcc20] hover:bg-slate-200 font-medium text-black active:scale-95 rounded-md px-7 h-11">
+            <Link to="/products">
+            <button className="bg-[#fbcc20] hover:bg-[#fbcc30]/80 font-medium text-black active:scale-95 rounded-md px-7 h-11 cursor-pointer">
               Shop Now
             </button>
             </Link>

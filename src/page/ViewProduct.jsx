@@ -1,8 +1,15 @@
-import React, { useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProductById } from "../features/products/productsSlice";
+import {
+  fetchProductById,
+  deleteProduct,
+  updateProduct,
+} from "../features/products/productsSlice";
 import Loader from "../components/Loader";
+import DeleteModal from "../components/DeleteModal";
+import EditProductModal from "../components/EditProductModal";
+import toast from "react-hot-toast";
 import { convertUsdToInr, formatInr } from "../utils/currency";
 import {
   FaStar,
@@ -17,16 +24,33 @@ import {
 const ViewProduct = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { selectedProduct: product, status } = useSelector(
     (state) => state.products
   );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProductById(id));
     window.scrollTo(0, 0);
   }, [id, dispatch]);
 
-  if (status === "loading") {
+  const handleDelete = () => {
+    dispatch(deleteProduct(id)).then(() => {
+      toast.success("Product deleted successfully!");
+      navigate("/products");
+    });
+  };
+
+  const handleUpdate = (updatedData) => {
+    dispatch(updateProduct({ id, updatedProduct: updatedData })).then(() => {
+      toast.success("Product updated successfully!");
+      setIsEditModalOpen(false);
+    });
+  };
+
+  if (status === "loading" && !isDeleteModalOpen && !isEditModalOpen) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#0f172a]">
         <Loader />
@@ -45,9 +69,11 @@ const ViewProduct = () => {
     );
   }
 
-  // Calculate prices
-  const inrPrice = formatInr(convertUsdToInr(product.price));
-  const fakeOriginalPrice = formatInr(convertUsdToInr(product.price * 1.2));
+  // Calculate prices only if product exists
+  const inrPrice = product ? formatInr(convertUsdToInr(product.price)) : "";
+  const fakeOriginalPrice = product
+    ? formatInr(convertUsdToInr(product.price * 1.2))
+    : "";
 
   return (
     <div className="relative min-h-screen font-['Poppins'] text-white bg-[#0f172a] overflow-x-hidden">
@@ -138,12 +164,14 @@ const ViewProduct = () => {
               </span>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => setIsEditModalOpen(true)}
                   className="p-2 text-slate-400 hover:text-[#fbcc20] hover:bg-[#fbcc20]/10 rounded-full transition-all cursor-pointer"
                   title="Edit Product"
                 >
                   <FaEdit size={18} />
                 </button>
                 <button
+                  onClick={() => setIsDeleteModalOpen(true)}
                   className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all cursor-pointer"
                   title="Delete Product"
                 >
@@ -232,6 +260,23 @@ const ViewProduct = () => {
           </div>
         </div>
       </div>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Confirm Deletion"
+      >
+        <p>
+          Are you sure you want to delete this product? This action cannot be
+          undone.
+        </p>
+      </DeleteModal>
+      <EditProductModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleUpdate}
+        product={product}
+      />
     </div>
   );
 };
