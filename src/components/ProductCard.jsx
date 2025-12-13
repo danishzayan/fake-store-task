@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import { convertUsdToInr, formatInr } from "../utils/currency";
 
 // react icons
@@ -8,7 +9,7 @@ import { FiArrowUpRight } from "react-icons/fi";
 import { RiHeartAddLine, RiHeartFill } from "react-icons/ri";
 
 const ProductCard = ({ product }) => {
-  const { image, title, price } = product;
+  const { id, image, title, price } = product;
   const inrPrice = formatInr(convertUsdToInr(price));
 
   return (
@@ -52,10 +53,13 @@ const ProductCard = ({ product }) => {
 
         {/* actions */}
         <div className="flex items-center justify-between mt-7 gap-[15px]">
-          <button className="py-[9px] px-4 text-black font-medium rounded-2xl grow justify-center flex items-center gap-[0.5rem] hover:bg-[#fbcc30]/80 text-[1rem] bg-[#fbcc20] transition-all duration-200 cursor-pointer">
+          <Link
+            to={`/products/${id}`}
+            className="py-[9px] px-4 text-black font-medium rounded-2xl grow justify-center flex items-center gap-[0.5rem] hover:bg-[#fbcc30]/80 text-[1rem] bg-[#fbcc20] transition-all duration-200 cursor-pointer"
+          >
             View Product
             <FiArrowUpRight className="text-[1.3rem]" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
