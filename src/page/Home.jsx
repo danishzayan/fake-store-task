@@ -31,7 +31,7 @@ const Home = () => {
 
   return (
     // Added a wrapper div to handle the font-family and relative positioning for the background
-    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white bg-[#0f172a]">
+    <div className="relative min-h-screen overflow-hidden font-['Poppins'] text-white">
       
       {/* Background SVG */}
       <svg
