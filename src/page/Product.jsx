@@ -6,6 +6,7 @@ import { logout } from "../features/auth/authSlice";
 import ProductCard from "../components/productCard";
 import Loader from "../components/Loader";
 import Pagination from "../components/Pagination";
+import { FiInbox } from "react-icons/fi";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -151,7 +152,7 @@ const Product = () => {
                     value={cat}
                     className="bg-slate-800 text-white"
                   >
-                    {cat.toUpperCase()}
+                    {cat === "all" ? "ALL CATEGORY" : cat.toUpperCase()}
                   </option>
                 ))}
               </select>
@@ -310,7 +311,7 @@ const Product = () => {
         >
           {categories.map((cat) => (
             <option key={cat} value={cat} className="bg-slate-900">
-              {cat.toUpperCase()}
+              {cat === "all" ? "ALL CATEGORY" : cat.toUpperCase()}
             </option>
           ))}
         </select>
@@ -360,7 +361,8 @@ const Product = () => {
         {status === "succeeded" && (
           <>
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-20 text-slate-500">
+              <div className="flex flex-col items-center gap-4 text-center py-20 text-slate-500">
+                <FiInbox className="w-24 h-24 text-slate-600" />
                 <p>No products found matching your criteria.</p>
               </div>
             ) : (
