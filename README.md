@@ -1,6 +1,6 @@
 # Fake Store - A React Web App
 
-Build a small, high-performance React application that displays product data fetched from the
+I have developed a FakeStore, high-performance React application that displays product data fetched from the
 Fake Store API. The goal is to assess your ability to work with APIs, efficient state/data
 management, UI optimization, and handling live data updates/mutations.
 
