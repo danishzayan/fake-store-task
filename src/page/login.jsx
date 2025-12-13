@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../features/auth/authSlice';
 import toast from 'react-hot-toast';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoggedIn, error } = useSelector((state) => state.auth);
@@ -45,12 +46,10 @@ const Login = () => {
         </Link>
       </div>
       {/* Card Container */}
-      {/* Changes: bg-white -> bg-white/5 (transparent), shadow-xl -> shadow-sm, border color adjusted, added backdrop-blur */}
       <div className="bg-white/5 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-sm w-full max-w-md border border-white/10">
         
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
-          {/* Text color changed to white/gray for visibility on dark background */}
           <h2 className="text-3xl text-white font-semibold">Sign In</h2>
           <p className="text-sm text-gray-400 mt-2 text-center">
             Welcome back! Please enter your details.
@@ -77,7 +76,6 @@ const Login = () => {
                 />
               </svg>
             </div>
-            {/* Input bg changed to semi-transparent dark, text to white */}
             <input
               type="email"
               placeholder="Email address"
@@ -106,13 +104,20 @@ const Login = () => {
               </svg>
             </div>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl outline-none focus:border-[#fbcc30] focus:ring-1 focus:ring-[#fbcc30] transition-all text-sm text-white placeholder-gray-500"
+              className="w-full pl-11 pr-12 py-3 bg-gray-900/50 border border-white/10 rounded-xl outline-none focus:border-[#fbcc30] focus:ring-1 focus:ring-[#fbcc30] transition-all text-sm text-white placeholder-gray-500"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white cursor-pointer"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           {/* Options: Remember me & Forgot Password */}
@@ -137,6 +142,16 @@ const Login = () => {
             Log In
           </button>
         </form>
+
+        {/* Demo Credentials */}
+        <div className="mt-6 p-4 bg-gray-800/50 border border-white/10 rounded-lg text-xs text-gray-400">
+          <h4 className="font-semibold text-white mb-2 text-center">Demo Credentials</h4>
+          <div className="flex flex-col gap-1">
+            <p>Email: <span className="text-white">psiborgtech@gmail.com</span></p>
+            <p>Email: <span className="text-white">danishzayan6@gmail.com</span></p>
+            <p>Password: <span className="text-white">test@123</span></p>
+          </div>
+        </div>
 
         {/* Footer */}
         <p className="text-center text-gray-500 text-sm mt-8">
